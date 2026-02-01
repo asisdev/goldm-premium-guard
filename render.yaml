@@ -1,0 +1,76 @@
+services:
+  - type: web
+    name: goldm-premium-guard
+    env: python
+    plan: free
+    autoDeploy: true
+
+    # ==== BUILD ====
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      # Install Kotak Neo v2 SDK (kept even if you run Zerodha)
+      pip install "git+https://github.com/Kotak-Neo/Kotak-neo-api-v2.git@v2.0.1#egg=neo_api_client"
+
+    # ==== START ====
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+
+    # ==== HEALTH ====
+    healthCheckPath: /health
+    healthCheckTimeout: 100
+
+    # ==== ENV VARS ====
+    envVars:
+      # --- Core behaviour ---
+      - key: BROKER
+        # Set to either KOTAK or ZERODHA at deploy time from dashboard
+        value: KOTAK
+
+      - key: LOOKBACK_MIN
+        value: "5"
+      - key: UNDER_MOVE_PCT
+        value: "0.20"
+      - key: OPT_STALE_PCT
+        value: "0.10"
+      - key: TOP_K
+        value: "5"
+      - key: RUN_INTERVAL_S
+        value: "60"
+      - key: ALERT_SILENCE_MIN
+        value: "5"
+
+      # --- Tradetron webhook (set securely in dashboard) ---
+      - key: TT_WEBHOOK_URL
+        sync: false
+      - key: TT_API_TOKEN
+        sync: false
+
+      # --- Zerodha (use these if BROKER=ZERODHA) ---
+      - key: KITE_API_KEY
+        sync: false
+      - key: KITE_API_SECRET
+        sync: false
+      - key: KITE_ACCESS_TOKEN
+        sync: false
+
+      # --- Kotak Neo (use these if BROKER=KOTAK) ---
+      - key: NEO_CONSUMER_KEY
+        sync: false
+      - key: NEO_USERNAME
+        sync: false
+      - key: NEO_PASSWORD
+        sync: false
+      - key: NEO_TOTP_SECRET
+        sync: false
+
+      # Kotak underlying FUT symbol (e.g., MCX:GOLDMFEB26FUT)
+      - key: KOTAK_FUT_SYMBOL
+        sync: false
+      # Kotak option symbols universe (comma-separated, current monthly CE/PE list)
+      # Example: MCX:GOLDM26FEB57000CE,MCX:GOLDM26FEB57100CE,MCX:GOLDM26FEB56900PE, ...
+      - key: KOTAK_WATCHLIST
+        sync: false
+
+    # ==== OPTIONAL RUNTIME SETTINGS ====
+    # Free instances spin down after ~15 minutes idle. Set up an external ping (UptimeRobot) to /health.
+    # If you upgrade to a paid plan, you can remove the pinger.

@@ -1,0 +1,8 @@
+fastapi==0.110.0
+uvicorn==0.23.2
+requests==2.31.0
+pandas==2.2.1
+pyotp==2.9.0
+python-dotenv==1.0.1
+kiteconnect==5.0.1         # for Zerodha mode
+# Kotak v2 SDK will be installed from Git in Render build step
