@@ -5,27 +5,18 @@ services:
     plan: free
     autoDeploy: true
 
-    # ==== BUILD ====
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
-      # Install Kotak Neo v2 SDK (kept even if you run Zerodha)
       pip install "git+https://github.com/Kotak-Neo/Kotak-neo-api-v2.git@v2.0.1#egg=neo_api_client"
 
-    # ==== START ====
     startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
 
-    # ==== HEALTH ====
     healthCheckPath: /health
     healthCheckTimeout: 100
 
-    # ==== ENV VARS ====
     envVars:
-      # --- Core behaviour ---
-      - key: BROKER
-        # Set to either KOTAK or ZERODHA at deploy time from dashboard
-        value: KOTAK
-
+      # ---- Strategy knobs (keep defaults or change in UI) ----
       - key: LOOKBACK_MIN
         value: "5"
       - key: UNDER_MOVE_PCT
@@ -39,38 +30,22 @@ services:
       - key: ALERT_SILENCE_MIN
         value: "5"
 
-      # --- Tradetron webhook (set securely in dashboard) ---
-      - key: TT_WEBHOOK_URL
-        sync: false
+      # ---- Tradetron (fill these in Render UI) ----
+      - key: TT_WEBHOOK_URL   # e.g., https://api.tradetron.tech/api
+        sync: false           # <<<CHANGE_ME: TRADETRON_WEBHOOK_URL>>> (set in UI)
       - key: TT_API_TOKEN
-        sync: false
+        sync: false           # <<<CHANGE_ME: TRADETRON_API_TOKEN>>> (set in UI)
 
-      # --- Zerodha (use these if BROKER=ZERODHA) ---
-      - key: KITE_API_KEY
-        sync: false
-      - key: KITE_API_SECRET
-        sync: false
-      - key: KITE_ACCESS_TOKEN
-        sync: false
-
-      # --- Kotak Neo (use these if BROKER=KOTAK) ---
+      # ---- Kotak Neo (fill in Render UI; do NOT commit real values) ----
       - key: NEO_CONSUMER_KEY
-        sync: false
+        sync: false           # <<<CHANGE_ME: KOTAK_CONSUMER_KEY>>> (set in UI)
       - key: NEO_USERNAME
-        sync: false
+        sync: false           # <<<CHANGE_ME: KOTAK_LOGIN_USER_OR_MOBILE>>> (set in UI)
       - key: NEO_PASSWORD
-        sync: false
+        sync: false           # <<<CHANGE_ME: KOTAK_LOGIN_PASSWORD>>> (set in UI)
       - key: NEO_TOTP_SECRET
-        sync: false
+        sync: false           # <<<CHANGE_ME: KOTAK_TOTP_SECRET_BASE32>>> (set in UI)
 
-      # Kotak underlying FUT symbol (e.g., MCX:GOLDMFEB26FUT)
-      - key: KOTAK_FUT_SYMBOL
-        sync: false
-      # Kotak option symbols universe (comma-separated, current monthly CE/PE list)
-      # Example: MCX:GOLDM26FEB57000CE,MCX:GOLDM26FEB57100CE,MCX:GOLDM26FEB56900PE, ...
-      - key: KOTAK_WATCHLIST
-        sync: false
-
-    # ==== OPTIONAL RUNTIME SETTINGS ====
-    # Free instances spin down after ~15 minutes idle. Set up an external ping (UptimeRobot) to /health.
-    # If you upgrade to a paid plan, you can remove the pinger.
+      # Optional override (usually leave default)
+      - key: NEO_BASE_URL
+        value: "https://napi.kotaksecurities.com"  # documented dev portal host [3](https://tradenvesteasy.com/fetch-live-option-chain-using-kotak-neo-api/)
