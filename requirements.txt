@@ -1,0 +1,7 @@
+fastapi==0.110.0
+uvicorn==0.23.2
+requests==2.31.0
+pandas==2.2.1
+pyotp==2.9.0
+python-dotenv==1.0.1
+# Kotak Neo v2 SDK is installed from Git during build (render.yaml buildCommand)
