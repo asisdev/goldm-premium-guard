@@ -8,7 +8,6 @@ services:
     buildCommand: |
       pip install --upgrade pip
       pip install -r requirements.txt
-      pip install "git+https://github.com/Kotak-Neo/Kotak-neo-api-v2.git@v2.0.1#egg=neo_api_client"
 
     startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
 
@@ -49,3 +48,4 @@ services:
       # Optional override (usually leave default)
       - key: NEO_BASE_URL
         value: "https://napi.kotaksecurities.com"  # documented dev portal host [3](https://tradenvesteasy.com/fetch-live-option-chain-using-kotak-neo-api/)
+
