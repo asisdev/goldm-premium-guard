@@ -3,13 +3,14 @@ services:
     name: goldm-premium-guard
     env: python
     plan: free
+    region: singapore
     autoDeploy: true
 
     buildCommand: |
       pip install --upgrade pip
-      pip install -r requirements.txt
+      pip install --no-cache-dir -r requirements.txt
 
-    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    startCommand: python server.py
 
     healthCheckPath: /health
     healthCheckTimeout: 100
@@ -30,22 +31,21 @@ services:
         value: "5"
 
       # ---- Tradetron (fill these in Render UI) ----
-      - key: TT_WEBHOOK_URL   # e.g., https://api.tradetron.tech/api
-        sync: false           # <<<CHANGE_ME: TRADETRON_WEBHOOK_URL>>> (set in UI)
+      - key: TT_WEBHOOK_URL
+        sync: false
       - key: TT_API_TOKEN
-        sync: false           # <<<CHANGE_ME: TRADETRON_API_TOKEN>>> (set in UI)
+        sync: false
 
       # ---- Kotak Neo (fill in Render UI; do NOT commit real values) ----
       - key: NEO_CONSUMER_KEY
-        sync: false           # <<<CHANGE_ME: KOTAK_CONSUMER_KEY>>> (set in UI)
+        sync: false
       - key: NEO_USERNAME
-        sync: false           # <<<CHANGE_ME: KOTAK_LOGIN_USER_OR_MOBILE>>> (set in UI)
+        sync: false
       - key: NEO_PASSWORD
-        sync: false           # <<<CHANGE_ME: KOTAK_LOGIN_PASSWORD>>> (set in UI)
+        sync: false
       - key: NEO_TOTP_SECRET
-        sync: false           # <<<CHANGE_ME: KOTAK_TOTP_SECRET_BASE32>>> (set in UI)
+        sync: false
 
       # Optional override (usually leave default)
       - key: NEO_BASE_URL
-        value: "https://napi.kotaksecurities.com"  # documented dev portal host [3](https://tradenvesteasy.com/fetch-live-option-chain-using-kotak-neo-api/)
-
+        value: "https://napi.kotaksecurities.com"
