@@ -1,0 +1,6 @@
+fastapi==0.115.5
+uvicorn[standard]==0.30.6
+neo_api_client==2.0.8
+requests==2.32.3
+pyotp==2.9.0
+python-multipart==0.0.9
