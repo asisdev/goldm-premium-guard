@@ -3,20 +3,18 @@ services:
     name: goldm-premium-guard
     env: python
     plan: free
-    region: singapore
     autoDeploy: true
 
     buildCommand: |
       pip install --upgrade pip
       pip install --no-cache-dir -r requirements.txt
 
-    startCommand: python server.py
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
 
     healthCheckPath: /health
     healthCheckTimeout: 100
 
     envVars:
-      # ---- Strategy knobs (keep defaults or change in UI) ----
       - key: LOOKBACK_MIN
         value: "5"
       - key: UNDER_MOVE_PCT
@@ -30,13 +28,13 @@ services:
       - key: ALERT_SILENCE_MIN
         value: "5"
 
-      # ---- Tradetron (fill these in Render UI) ----
+      # Tradetron
       - key: TT_WEBHOOK_URL
         sync: false
       - key: TT_API_TOKEN
         sync: false
 
-      # ---- Kotak Neo (fill in Render UI; do NOT commit real values) ----
+      # Kotak
       - key: NEO_CONSUMER_KEY
         sync: false
       - key: NEO_USERNAME
@@ -45,7 +43,3 @@ services:
         sync: false
       - key: NEO_TOTP_SECRET
         sync: false
-
-      # Optional override (usually leave default)
-      - key: NEO_BASE_URL
-        value: "https://napi.kotaksecurities.com"
